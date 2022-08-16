@@ -2,13 +2,13 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Mm]emoryCaptures/
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
@@ -58,3 +58,6 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+Assets/Stone Fountain/PresentationSceneSettings.lighting.meta
+Assets/유니티 3D 배경 에셋/NatureManufacture Assets/Meadow Environment Dynamic Nature/Trees/Models/Textures/T_Poplar_bark_03_MT_AO_G.tga
+Assets/유니티 3D 배경 에셋/NatureManufacture Assets/Meadow Environment Dynamic Nature/Trees/Models/Textures/T_Poplar_bark_03_BC.tga
