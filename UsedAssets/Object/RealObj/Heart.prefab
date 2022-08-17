@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6922793697723135513, guid: 5bf77ce1d0cc1c64187c9e84615fa414, type: 3}
+  - {fileID: 2100000, guid: b6c7ee68dae5b1b4cb5622aa96901553, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -96,6 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.02
+  rotSpeed: 0
 --- !u!65 &-4551112676386771710
 BoxCollider:
   m_ObjectHideFlags: 0

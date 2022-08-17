@@ -37,9 +37,10 @@ public class DialogueSystem : MonoBehaviour
     }
     public void End()
     {
+        Time.timeScale = 1;
         txtSentence.text = string.Empty;
         Target.SetActive(false);
         dialogueTrigger.OffTrigger();
-            
+
     }
 }

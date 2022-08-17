@@ -8,9 +8,12 @@ public class DialogueTrigger : MonoBehaviour
     public Dialogue info;
     public void OnTriggerEnter(Collider other)
     {
-        
-        if(istri== false)
-        Trigger();
+        if (istri == false)
+        {
+            Time.timeScale = 0;
+            Trigger();
+        }
+
     }
     public void Trigger()
     {
