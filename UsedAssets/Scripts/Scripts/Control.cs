@@ -14,11 +14,13 @@ public class Control : MonoBehaviour
     private GameObject heart;
 
     public int heartcount;
+    public Animator anim;
 
     void Start()
     {
         behavior = GetComponent<Behavior>();
         mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        anim = GameObject.Find("Player").GetComponent<Animator>();
     }
 
     void Update()
@@ -34,6 +36,7 @@ public class Control : MonoBehaviour
                 if(hit.transform.tag == "River")
                 {
                     targetPos = new Vector3(hit.point.x, 2, hit.point.z);
+                    anim.SetTrigger("isRow");
                 }
             }
         }
