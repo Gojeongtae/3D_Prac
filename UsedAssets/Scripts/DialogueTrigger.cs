@@ -6,6 +6,7 @@ public class DialogueTrigger : MonoBehaviour
 {
     bool istri = false;
     public Dialogue info;
+
     public void OnTriggerEnter(Collider other)
     {
         if (istri == false)
@@ -24,6 +25,8 @@ public class DialogueTrigger : MonoBehaviour
     public void OffTrigger()
     {
         istri = false;
+        BoxCollider colliderA = GetComponent<BoxCollider>();
+        colliderA.enabled = false;
     }
    
 }

@@ -11,29 +11,60 @@ public class DialogueSystem : MonoBehaviour
     public GameObject dialogue;
     public DialogueTrigger dialogueTrigger;
 
+
+    public GameObject dialogueL;
+    public GameObject dialogueR;
+
+
     Queue<string> sentences = new Queue<string>();
+    Queue<int> nums = new Queue<int>();
+
+    string name;
+    string name2;
+
+    private int Ivent; //현재의 말풍선 상태 
+
     public void Begin(Dialogue info)
     {
         sentences.Clear();
         Target.SetActive(true);
-        txtName.text = info.name;
-
-        foreach(var sentence in info.sentences)
+        
+        foreach (var sentence in info.sentences)
         {
             sentences.Enqueue(sentence);
         }
+        foreach (var num in info.nums)
+        {
+            nums.Enqueue(num);
+        }
+        name = info.name;
+        name2 = info.name2;
+
         Next(); 
     }
 
     public void Next()
     {
-        if(sentences.Count == 0)
+        if (sentences.Count == 0)
         {
             End();
             return;
         }
         txtSentence.text = sentences.Dequeue();
-          
+        Ivent = nums.Dequeue();
+
+        if(Ivent == 1)
+        {
+            dialogueL.SetActive(false);
+            dialogueR.SetActive(true);
+            txtName.text = name;
+        }
+        else if (Ivent == 2)
+        {
+            dialogueL.SetActive(true);
+            dialogueR.SetActive(false);
+            txtName.text = name2;
+        }
     }
     public void End()
     {
@@ -41,6 +72,5 @@ public class DialogueSystem : MonoBehaviour
         txtSentence.text = string.Empty;
         Target.SetActive(false);
         dialogueTrigger.OffTrigger();
-
     }
 }

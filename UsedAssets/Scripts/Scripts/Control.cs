@@ -10,6 +10,7 @@ public class Control : MonoBehaviour
     private float time;
     private bool isTime;
     public float RealTime;
+    private float FirstTime;
 
     private GameObject heart;
 
@@ -57,19 +58,19 @@ public class Control : MonoBehaviour
         {
             //상호작용을 보여주는 대기바
             time += Time.deltaTime;
-            RealTime = time * 0.5f;
+            RealTime = time * 0.001f;
             UIBar.instance.SetValue(RealTime);
 
-            if (RealTime >= 3)
+            FirstTime += RealTime;
+
+            if (FirstTime >=1f)
             {
                 time = 0f;
+                FirstTime = 0f;
                 isTime = false;
                 Destroy(heart);
             }
         }
-
-
-
     }
 
     public void OnTriggerEnter(Collider other)

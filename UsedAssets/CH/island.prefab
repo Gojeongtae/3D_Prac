@@ -1596,7 +1596,6 @@ Transform:
   - {fileID: 4761767850340033803}
   - {fileID: 8101297659524103236}
   - {fileID: 2039500491870972996}
-  - {fileID: 2640933691980333128}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -56.804, z: 0}
@@ -1641,6 +1640,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   info:
     name: "\uAC70\uBD81\uC774"
+    name2: 
     sentences:
     - "\uD56D\uD574\uB294 \uC5B4\uB54C?"
     - "\uAFC8\uC774 \uC5C6\uC73C\uB2C8 \uBB50\uB4E0\uC9C0 \uD3EC\uAE30\uD558\uAC8C
@@ -1653,6 +1653,7 @@ MonoBehaviour:
     - "\uD558\uC9C0\uB9CC \uD3EC\uAE30\uD574\uBC84\uB838\uC9C0\t\t\t\t\t\t\t\t\t\t "
     - "\uADF8\uB9AC\uACE4 \uC774\uACF3\uC5D0 \uBA48\uCDB0\uBC84\uB838\uC5B4..\t\t\t\t\t\t\t\t\t\t "
     - "\uB0B4 \uACBD\uC7C1\uC790\uB4E4\uC740 \uC774\uBBF8 \uB2E4\uB4E4 \uB0A0 \uC9C0\uB098\uCCD0\uBC84\uB838\uC9C0..\t\t\t\t\t\t\t\t\t\t "
+    nums: 
 --- !u!114 &8240633840339487318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1666,65 +1667,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bgmName: 
---- !u!1001 &2534614331226859427
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 8491015570227921463}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
-      propertyPath: m_RootOrder
-      value: 19
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -20
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 14
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.36609617
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.36609617
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.6049576
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.6049576
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -117.639
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
-      propertyPath: m_Name
-      value: Turtle_animation
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
---- !u!4 &2640933691980333128 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 508085a93742d494aaebaefd4a56e344, type: 3}
-  m_PrefabInstance: {fileID: 2534614331226859427}
-  m_PrefabAsset: {fileID: 0}

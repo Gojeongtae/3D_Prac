@@ -1,14 +1,11 @@
 fileFormatVersion: 2
-guid: 5d246ffb95c5403499f8beb4564afa11
+guid: 26546b247e4e52a4a9185fb22e942ab5
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
   - first:
-      74: -8872527761118333063
-    second: TurtleArmature|Fluent_Wire.002Action
-  - first:
-      74: 4621602924753096994
-    second: TurtleArmature|TurtleArmatureAction
+      74: -1422011007694221501
+    second: Armature|ArmatureAction.001
   externalObjects: {}
   materials:
     materialImportMode: 2

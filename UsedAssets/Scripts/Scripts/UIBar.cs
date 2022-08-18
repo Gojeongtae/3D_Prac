@@ -8,17 +8,18 @@ public class UIBar : MonoBehaviour
     public static UIBar instance { get; private set; }
 
     public Image mask;
-    float originalSize;
+    float originalSize = 0;
     int count = 0;
     public Text text;
     void Awake()
     {
         instance = this;
+        mask.fillAmount = 0f;
     }
 
     void Start()
     {
-        originalSize = mask.rectTransform.rect.width;
+        originalSize = 100f;
     }
     private void Update()
     {
@@ -27,9 +28,10 @@ public class UIBar : MonoBehaviour
 
     public void SetValue(float value)
     {
-        mask.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, originalSize * value);
-        if(value >= 3)
+        mask.fillAmount += value;
+        if (mask.fillAmount >= 1f)
         {
+            mask.fillAmount = 0f;
             value = 0f;
             count += 1;
         }

@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class Behavior : MonoBehaviour
 {
-    public float speed = 500.0f;
+    public float speed;
     private Rigidbody rigid;
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody>();
+        speed = 3f;
     }
 
     public bool Run(Vector3 targetPos)
