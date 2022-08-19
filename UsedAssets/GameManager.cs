@@ -67,15 +67,15 @@ public class GameManager: MonoBehaviour
     {
         //Variable Initializing
         Timer_PHASE = 40.0f;
-        Timer_RESPAWN = 3f;
+        Timer_RESPAWN = 5.0f;
         time_PHASE = 0.0f;
         time_RESPAWN = 0.0f;
+        Player = GameObject.FindGameObjectWithTag("Player");
 
         //게임 시작 전 준비
         //이벤트 트리거 오브젝트 Transform 초기화
         EvTriggerObjTransform.position = new Vector3(0f, 0f, -40.0f);
         EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-
         StartCoroutine("EvTriggerObj_Gen");
     }
 
@@ -95,22 +95,31 @@ public class GameManager: MonoBehaviour
             //Case 3 = 흔들기 튜토리얼
             //Case 4 = 편지 든 병 띄우기
 
-            case 1: //이동 튜토리얼
+            case 1: 
+                //이동 튜토리얼
                 //부모와의 대화 출력 위한 작업
-                DlTriggerObjTransform.position = new Vector3(0f, 0.0f, 0f);
-                DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-                StartCoroutine("DlTriggerObj_Gen");
+                if(FindObjectOfType<DialogueTrigger>() == null)
+                {
+                    DlTriggerObjTransform.position = new Vector3(0f, 0.0f, -10f);
+                    DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+                    StartCoroutine("DlTriggerObj_Gen");
+                }
                 
                 //하트 파밍 이벤트로의 전환 준비
-                EvTriggerObjTransform.position = new Vector3(0f, 40.0f, 0f);
-                EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-                StartCoroutine("EvTriggerObj_Gen");
-
+                if(FindObjectOfType<TriggerEvent>() == null)
+                {
+                    EvTriggerObjTransform.position = new Vector3(0f, 0f, 10.0f);
+                    EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+                    StartCoroutine("EvTriggerObj_Gen");
+                }
                 break;
 
-            case 2: // 하트 파밍
+            case 2: 
+                // 하트 파밍
                 //페이즈 타이머의 길이동안 이벤트 실행
                 //이벤트 실행되는 동안 스폰 주기때마다 하트 재생성
+                //두 개의 타이머를 활용, 페이즈 타이머인 40초가 되었을 때 다음 페이즈
+                //리스폰 타이머는 특정 시간(여기서는 3초)마다 새로운 오브젝트를 생성
                 if (time_PHASE <= Timer_PHASE)
                 {
                     if (time_RESPAWN < Timer_RESPAWN)
@@ -127,27 +136,83 @@ public class GameManager: MonoBehaviour
                 else
                 {
                     PHASE = 3;
+                    time_PHASE = 0.0f;
+                    time_RESPAWN = 0.0f;
                 }
                 break;
 
-            case 3:
-                //흔들기 튜토리얼
-                //일단 후순위 구현
-
+            case 3:     //흔들기 튜토리얼
                 break;
-            case 4:
-                //편지 든 병 띄우기 이벤트
-
-
+            case 4:     //편지 든 병 띄우기 이벤트
                 break;
 
-            //********성년기*********//
+            //********청소년기*********//
             //Case 5 = 별 파밍
             //Case 6 = 큰 별 파밍
             //Case 7 = 독립
-            //case 5: break;
-            //case 6: break;
-            //default: break;
+            case 5:     //별 파밍 이벤트
+                //하트 파밍 이벤트와 동일, 파밍되는 
+                if (time_PHASE <= Timer_PHASE)
+                {
+                    if (time_RESPAWN < Timer_RESPAWN)
+                    {
+                        time_RESPAWN += Time.deltaTime;
+                    }
+                    else
+                    {
+                        StartCoroutine("Star_Gen");
+                        time_RESPAWN = 0.0f;
+                    }
+                    time_PHASE += Time.deltaTime;
+                }
+                else
+                {
+                    PHASE = 6;
+                }
+                break;
+            case 6:     //큰 별 파밍 이벤트
+                if (time_PHASE <= Timer_PHASE)
+                {
+                    if (time_RESPAWN < Timer_RESPAWN)
+                    {
+                        time_RESPAWN += Time.deltaTime;
+                    }
+                    else
+                    {
+                        StartCoroutine("Star_Gen");
+                        time_RESPAWN = 0.0f;
+                    }
+                    time_PHASE += Time.deltaTime;
+                }
+                else
+                {
+                    PHASE = 7;
+                }
+                break;
+            case 7:     //독립 이벤트
+                break;
+
+            //********성년기*********//
+            //Case 8 = 돈 파밍
+            //Case 9 = 갈매기 NPC 이벤트
+            //Case 10 = 경쟁자 이벤트
+            //Case 11 = 소용돌이 이벤트
+            //Case 12 = 빙하 이벤트
+            //Case 13 = 번개 이벤트
+            //Case 14 = 거북이 NPC 이벤트
+            //Case 15 = 별의 승천
+            //Case 16 = 연인 이벤트 1
+            //Case 17 = 연인 이벤트 2
+
+            case 8: //돈 파밍 이벤트
+                break;
+
+            //********노년기********//
+            //Case 18 = 
+
+
+            default:    //아무 의미 없는 Default값 
+                break;
         }
     }
 
@@ -155,21 +220,41 @@ public class GameManager: MonoBehaviour
     // 하트, 별, 큰 별, 돈, 음표, 연인 이벤트 시 꽃 오브젝트, 백합 오브젝트 
     IEnumerator Heart_Gen()
     {
-        GameObject instantHeart = Instantiate(Heart, HeartTransform.position, HeartTransform.rotation);
-        //Rigidbody bulletRigid = instantHeart.GetComponent<Rigidbody>();
-        //bulletRigid.velocity = HeartTransform.forward * 5;
+        //플레이어 Transform 불러옴
+        Transform playerTransform = Player.GetComponent<Transform>();
+
+        //범위 설정 (min, Max값)
+        float min = 50.0f;
+        float max = 100.0f;
 
 
 
+        //하트 오브젝트 10개 생성
+        int i = 0;
+        for (i = 0; i < 10; i++)
+        {
+            HeartTransform.position = new Vector3(playerTransform.position.x + Random.Range(-1 * min, min), HeartTransform.position.y, playerTransform.position.z + Random.Range(min, max));
+            GameObject instantHeart = Instantiate(Heart, HeartTransform.position, HeartTransform.rotation);
+        }
         yield return null;
     }
 
     IEnumerator Star_Gen()
     {
-        GameObject instantStar = Instantiate(Star, StarTransform.position, StarTransform.rotation);
-        Rigidbody starRigid = instantStar.GetComponent<Rigidbody>();
-        starRigid.velocity = StarTransform.forward * 5;
+        //플레이어 Transform 불러옴
+        Transform playerTransform = Player.GetComponent<Transform>();
 
+        //범위 설정 (min, Max값)
+        float min = 50.0f;
+        float max = 100.0f;
+
+        //별 오브젝트 10개 생성
+        int i = 0;
+        for (i = 0; i < 10; i++)
+        {
+            StarTransform.position = new Vector3(playerTransform.position.x + Random.Range(-1 * min, min), StarTransform.position.y, StarTransform.position.z + Random.Range(min, max));
+            GameObject instantStar = Instantiate(Star, StarTransform.position, StarTransform.rotation);
+        }
         yield return null;
     }
 
@@ -269,6 +354,7 @@ public class GameManager: MonoBehaviour
     //일기 담긴 병, 큰 배, 섬, 빈 장면 대화 트리거,
     IEnumerator EvTriggerObj_Gen()
     {
+
         GameObject instantEvTrigObj = Instantiate(EventTriggerObject, EvTriggerObjTransform.position, EvTriggerObjTransform.rotation);
         Rigidbody EvTrigObjRigid = instantEvTrigObj.GetComponent<Rigidbody>();
 
@@ -276,8 +362,8 @@ public class GameManager: MonoBehaviour
     }
     IEnumerator DlTriggerObj_Gen()
     {
-        GameObject instantEvTrigObj = Instantiate(DialogueTriggerObject, DlTriggerObjTransform.position, DlTriggerObjTransform.rotation);
-        Rigidbody DlTrigObjRigid = instantEvTrigObj.GetComponent<Rigidbody>();
+        GameObject instantDlTrigObj = Instantiate(DialogueTriggerObject, DlTriggerObjTransform.position, DlTriggerObjTransform.rotation) ;
+        Rigidbody EvTrigObjRigid = instantDlTrigObj.GetComponent<Rigidbody>();
 
         yield return null;
     }
