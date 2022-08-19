@@ -7,9 +7,11 @@ public class UIBar : MonoBehaviour
 {
     public static UIBar instance { get; private set; }
 
+   
+
     public Image mask;
     float originalSize = 0;
-    int count = 0;
+    public int count = 0;
     public Text text;
     void Awake()
     {

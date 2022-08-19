@@ -27,7 +27,6 @@ public class CameraController : MonoBehaviour
 
         result = (int)Mathf.RoundToInt(follow.rotation.x * 10f);
 
-        Debug.Log(result);
 
         //if(result >= 3 && result <= 5)
         
