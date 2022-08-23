@@ -7,8 +7,8 @@ public class CameraController : MonoBehaviour
     private Camera thisCamera;
     public Transform follow;
 
-    public float rotSpeed;
-    public float transSpeed;
+    public float Rotspeed = 15.0f;
+    public float Transspeed = 5.0f;
     bool UIisActive = false;
 
     private int result;
@@ -17,8 +17,8 @@ public class CameraController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rotSpeed = 15.0f;
-        transSpeed = 5.0f;
+        Rotspeed = 15.0f;
+        Transspeed = 5.0f;
         thisCamera = GetComponent<Camera>();
         DelayUI = GameObject.FindGameObjectWithTag("UI");
     }
@@ -26,7 +26,7 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float scroll = Input.GetAxis("Mouse ScrollWheel") * rotSpeed;
+        float scroll = Input.GetAxis("Mouse ScrollWheel") * Rotspeed;
 
         result = (int)Mathf.RoundToInt(follow.rotation.x * 10f);
 
@@ -36,8 +36,8 @@ public class CameraController : MonoBehaviour
             if (scroll != 0)
             {
                 Quaternion q = follow.rotation;
-                q.eulerAngles = new Vector3(q.eulerAngles.x + scroll * rotSpeed, q.eulerAngles.y, q.eulerAngles.z);
-                follow.transform.position = new Vector3(follow.transform.position.x, follow.transform.position.y + scroll * transSpeed, follow.transform.position.z);
+                q.eulerAngles = new Vector3(q.eulerAngles.x + scroll * Rotspeed, q.eulerAngles.y, q.eulerAngles.z);
+            follow.transform.position = new Vector3(follow.transform.position.x, follow.transform.position.y + scroll * Transspeed, follow.transform.position.z);
                 follow.rotation = q;
             }
             else if (result != 3)

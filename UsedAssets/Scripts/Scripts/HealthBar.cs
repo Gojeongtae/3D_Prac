@@ -15,7 +15,6 @@ public class HealthBar : MonoBehaviour
     {
         mask.fillAmount = 0.175f;
     }
-
     void Start()
     {
         originalSize = 100f;
@@ -24,7 +23,6 @@ public class HealthBar : MonoBehaviour
     }
     private void Update()
     {
-        //Debug.Log(prev);
         curr = UIBar.instance.count;
         if (prev != curr)
         {

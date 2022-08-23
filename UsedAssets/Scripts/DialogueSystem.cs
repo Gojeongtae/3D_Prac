@@ -19,20 +19,16 @@ public class DialogueSystem : MonoBehaviour
     Queue<string> sentences = new Queue<string>();
     Queue<int> nums = new Queue<int>();
 
-    string name1;
+    string name;
     string name2;
-    string name3;
 
     private int Ivent; //현재의 말풍선 상태 
 
     public void Begin(Dialogue info)
     {
-        Debug.Log(1);
         sentences.Clear();
         Target.SetActive(true);
-
-        Debug.Log(info.sentences.Count);
-
+        
         foreach (var sentence in info.sentences)
         {
             sentences.Enqueue(sentence);
@@ -74,7 +70,7 @@ public class DialogueSystem : MonoBehaviour
     {
         Time.timeScale = 1;
         txtSentence.text = string.Empty;
-        dialogueTrigger.OffTrigger();
+        //dialogueTrigger.OffTrigger();
         Target.SetActive(false);
     }
 }
