@@ -7,7 +7,7 @@ using System.Text;
 public class GameManager : MonoBehaviour
 {
     // **************************************************************************** Event Variables ************************************************************************************ //
-    //파밍 이벤트 시 생성해야 할 GameObject
+    //When The Farming Event GameObject
     public GameObject Heart;                // 하트 오브젝트
     public GameObject Star;                 // 별 오브젝트
     public GameObject LStar;                // 큰 별 오브젝트
@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
     //파밍 이벤트 시 생성되는 GameObject의 Transform Component
     public Transform HeartTransform;        // 하트 오브젝트의 Transform
     public Transform StarTransform;         // 별 오브젝트의 Transform
-    public Transform LStarTransforml;       // 큰 별 오브젝트의 Transform
+    public Transform LStarTransform;       // 큰 별 오브젝트의 Transform
     public Transform MoneyTransform;        // 돈 오브젝트의 Transform
     public Transform NoteTransform;         // 음표 오브젝트의 Transform
     public Transform FlowerTransform;       // 꽃 오브젝트의 Transform
@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
     public Transform Boat_BigTransform;
     public Transform IslandTransform;
     public Transform RockTransform;
-    public FadeInOut fadeInOut;
+
 
     // ************************************************************************************* GamePlay Variables ********************************************************************************** //
 
@@ -62,13 +62,18 @@ public class GameManager : MonoBehaviour
     private GameObject Player;
 
     //페이즈 및 재생성 관련 타이머 및 수치
-    public int PHASE = 0;
+    public int PHASE = 7;
     private float Timer_PHASE;
     private float Timer_RESPAWN;
     private float time_PHASE;
     private float time_RESPAWN;
 
     private Dialogues dialogs;
+
+    public FadeInOut fadeInOut;
+
+    //페이즈별 오브젝트 등장 개수 제한
+    private int LStar_Count = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -80,25 +85,30 @@ public class GameManager : MonoBehaviour
         time_RESPAWN = 0.0f;
         Player = GameObject.FindGameObjectWithTag("Player");
 
+        //Read
         ReadJson();
-        //게임 시작 전 준비
-        //이벤트 트리거 오브젝트 Transform 초기화
-        EvTriggerObjTransform.position = new Vector3(0f, 0f, -25.0f);
-        EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-        StartCoroutine("EvTriggerObj_Gen");
     }
 
     // Update is called once per frame
     void Update()
     {
+        Transform playerTransform = Player.GetComponent<Transform>();
+
         //게임 이벤트 전부 정리
         switch (PHASE)
         {
             //******************************************** 게임 시작 전 ********************************************//
             //******************************************************************************************************//
             case 0:
-                if(fadeInOut != null)
+                if (fadeInOut != null)
                     fadeInOut.StartCoroutine(fadeInOut.FadeIn(2));
+
+                if (FindObjectOfType<TriggerEvent>() != null)
+                {
+                    EvTriggerObjTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y + 20.0f, playerTransform.position.z);
+                    EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+                    StartCoroutine("EvTriggerObj_Gen");
+                }
                 break;
 
             //*********************************************** 유아기 ***********************************************//
@@ -194,7 +204,8 @@ public class GameManager : MonoBehaviour
                 break;
 
             case 4:     //편지 든 병 띄우기 이벤트
-                
+                Timer_PHASE = 60.0f;
+                Timer_RESPAWN = 10.0f;
                 //편지 띄우기 전 대화
                 if (FindObjectOfType<DialogueTrigger>() == null)
                 {
@@ -248,7 +259,8 @@ public class GameManager : MonoBehaviour
                 break;
 
             case 7:     //큰 별 파밍 이벤트
-                if (time_PHASE <= Timer_PHASE)
+
+                if (time_PHASE <= Timer_PHASE && time_PHASE < 11.0f)
                 {
                     if (time_RESPAWN < Timer_RESPAWN)
                     {
@@ -258,6 +270,15 @@ public class GameManager : MonoBehaviour
                     {
                         StartCoroutine("Star_Gen");
                         time_RESPAWN = 0.0f;
+                    }
+                    time_PHASE += Time.deltaTime;
+                }
+                if(time_PHASE < 20.0f && time_PHASE > 11.0f)
+                {
+                    if(LStar_Count == 0)
+                    {
+                        StartCoroutine("LStar_Gen");
+                        LStar_Count++;
                     }
                     time_PHASE += Time.deltaTime;
                 }
@@ -293,22 +314,99 @@ public class GameManager : MonoBehaviour
             case 9:     //돈 파밍 이벤트
                 break;
 
-            case 10:     //갈매기 NPC 이벤트
+            case 10:    //갈매기 NPC 이벤트
                 break;
 
             case 11:    //경쟁자 이벤트
                 break;
 
             case 12:    //소용돌이 이벤트
+                if (time_PHASE <= Timer_PHASE)
+                {
+                    if (time_RESPAWN < Timer_RESPAWN)
+                    {
+                        time_RESPAWN += Time.deltaTime;
+                    }
+                    else
+                    {
+                        StartCoroutine("Whirlpool_Gen");
+                        time_RESPAWN = 0.0f;
+                    }
+                    time_PHASE += Time.deltaTime;
+                }
+                else
+                {
+                    PHASE = 13;
+                }
                 break;
 
             case 13:    //빙하 이벤트
+                if (time_PHASE <= Timer_PHASE)
+                {
+                    if (time_RESPAWN < Timer_RESPAWN)
+                    {
+                        time_RESPAWN += Time.deltaTime;
+                    }
+                    else
+                    {
+                        StartCoroutine("Iceberg_Gen");
+                        time_RESPAWN = 0.0f;
+                    }
+                    time_PHASE += Time.deltaTime;
+                }
+                else
+                {
+                    PHASE = 14;
+                }
                 break;
 
             case 14:    //번개 이벤트
+                if (time_PHASE <= Timer_PHASE)
+                {
+                    if (time_RESPAWN < Timer_RESPAWN)
+                    {
+                        time_RESPAWN += Time.deltaTime;
+                    }
+                    else
+                    {
+                        StartCoroutine("Thunder_Gen");
+                        time_RESPAWN = 0.0f;
+                    }
+                    time_PHASE += Time.deltaTime;
+                }
+                else
+                {
+                    PHASE = 15;
+                }
                 break;
 
             case 15:    //거북이 NPC 이벤트
+                /*if (time_PHASE <= Timer_PHASE && time_PHASE < 11.0f)
+                {
+                    if (time_RESPAWN < Timer_RESPAWN)
+                    {
+                        time_RESPAWN += Time.deltaTime;
+                    }
+                    else
+                    {
+                        StartCoroutine("Star_Gen");
+                        time_RESPAWN = 0.0f;
+                    }
+                    time_PHASE += Time.deltaTime;
+                }
+                if (time_PHASE < 20.0f && time_PHASE > 11.0f)
+                {
+                    if (LStar_Count == 0)
+                    {
+                        StartCoroutine("LStar_Gen");
+                        LStar_Count++;
+                    }
+                    time_PHASE += Time.deltaTime;
+                }
+                else
+                {
+                    PHASE = 16;
+                }*/
                 break;
 
             case 16:    //별의 승천 이벤트
@@ -376,7 +474,7 @@ public class GameManager : MonoBehaviour
         float max = 100.0f;
 
         //하트 오브젝트 10개 생성
-        int i = 0;
+        int i;
         for (i = 0; i < 10; i++)
         {
             HeartTransform.position = new Vector3(playerTransform.position.x + Random.Range(-1 * min, min), HeartTransform.position.y, playerTransform.position.z + Random.Range(min, max));
@@ -395,7 +493,7 @@ public class GameManager : MonoBehaviour
         float max = 100.0f;
 
         //별 오브젝트 10개 생성
-        int i = 0;
+        int i;
         for (i = 0; i < 10; i++)
         {
             StarTransform.position = new Vector3(playerTransform.position.x + Random.Range(-1 * min, min), StarTransform.position.y, playerTransform.position.z + Random.Range(min, max));
@@ -406,9 +504,15 @@ public class GameManager : MonoBehaviour
 
     IEnumerator LStar_Gen()
     {
-        GameObject instantLStar = Instantiate(LStar, LStarTransforml.position, LStarTransforml.rotation);
-        Rigidbody lstarRigid = instantLStar.GetComponent<Rigidbody>();
-        lstarRigid.velocity = LStarTransforml.forward * 5;
+        //플레이어 Transform 불러옴
+        Transform playerTransform = Player.GetComponent<Transform>();
+
+        //범위 설정 (min, Max값)
+        float min = 10.0f;
+        float max = 15.0f;
+
+        LStarTransform.position = new Vector3(playerTransform.position.x + Random.Range(-1 * min, min), LStarTransform.position.y, playerTransform.position.z + Random.Range(min, max));
+        GameObject instantLStar = Instantiate(LStar, LStarTransform.position, LStarTransform.rotation);
 
         yield return null;
     }
@@ -462,37 +566,69 @@ public class GameManager : MonoBehaviour
 
     IEnumerator Whirlpool_Gen()
     {
-        GameObject instantWhirlpool = Instantiate(Whirlpool, WhirlpoolTransform.position, WhirlpoolTransform.rotation);
-        Rigidbody whirlpoolRigid = instantWhirlpool.GetComponent<Rigidbody>();
-        whirlpoolRigid.velocity = WhirlpoolTransform.forward * 5;
+        Transform playerTransform = Player.GetComponent<Transform>();
 
+        //범위 설정 (min, Max값)
+        float min = 100.0f;
+        float max = 150.0f;
+
+        //하트 오브젝트 10개 생성
+        int i;
+        for (i = 0; i < 2; i++)
+        {
+            WhirlpoolTransform.position = new Vector3(playerTransform.position.x + Random.Range(-1 * min, min), WhirlpoolTransform.position.y, playerTransform.position.z + Random.Range(min, max));
+            GameObject instantWhirlpool = Instantiate(Whirlpool, WhirlpoolTransform.position, WhirlpoolTransform.rotation);
+        }
         yield return null;
     }
 
     IEnumerator Iceberg_Gen()
     {
-        GameObject instantIceberg = Instantiate(Iceberg, IcebergTransform.position, IcebergTransform.rotation);
-        Rigidbody icebergRigid = instantIceberg.GetComponent<Rigidbody>();
-        icebergRigid.velocity = IcebergTransform.forward * 5;
+        Transform playerTransform = Player.GetComponent<Transform>();
 
+        //범위 설정 (min, Max값)
+        float min = 100.0f;
+        float max = 150.0f;
+
+        //하트 오브젝트 10개 생성
+        int i;
+        for (i = 0; i < 2; i++)
+        {
+            IcebergTransform.position = new Vector3(playerTransform.position.x + Random.Range(-1 * min, min), IcebergTransform.position.y, playerTransform.position.z + Random.Range(min, max));
+            GameObject instantIceberg = Instantiate(Iceberg, IcebergTransform.position, IcebergTransform.rotation);
+        }
         yield return null;
     }
 
     IEnumerator Iceberg_Wall_Gen()
     {
-        GameObject instantIceberg_Wall = Instantiate(Iceberg_Wall, Iceberg_WallTransform.position, Iceberg_WallTransform.rotation);
-        Rigidbody iceberg_WallRigid = instantIceberg_Wall.GetComponent<Rigidbody>();
-        iceberg_WallRigid.velocity = Iceberg_WallTransform.forward * 5;
+        /*Transform playerTransform = Player.GetComponent<Transform>();
 
+        //범위 설정 (min, Max값)
+        float min = 100.0f;
+        float max = 150.0f;
+
+
+        HeartTransform.position = new Vector3(playerTransform.position.x + Random.Range(-1 * min, min), HeartTransform.position.y, playerTransform.position.z + Random.Range(min, max));
+        GameObject instantHeart = Instantiate(Heart, HeartTransform.position, HeartTransform.rotation);
+*/
         yield return null;
     }
 
     IEnumerator Thunder_Gen()
     {
-        GameObject instantThunder = Instantiate(Thunder, ThunderTransform.position, ThunderTransform.rotation);
-        Rigidbody thunderRigid = instantThunder.GetComponent<Rigidbody>();
-        thunderRigid.velocity = ThunderTransform.forward * 5;
+        Transform playerTransform = Player.GetComponent<Transform>();
 
+        //범위 설정 (min, Max값)
+        float min = 100.0f;
+        float max = 150.0f;
+
+        int i;
+        for (i = 0; i < 2; i++)
+        {
+            ThunderTransform.position = new Vector3(playerTransform.position.x + Random.Range(-1 * min, min), ThunderTransform.position.y, playerTransform.position.z + Random.Range(min, max));
+            GameObject instantHeart = Instantiate(Thunder, ThunderTransform.position, ThunderTransform.rotation);
+        }
         yield return null;
     }
 
@@ -518,6 +654,7 @@ public class GameManager : MonoBehaviour
         dlTrig.info.name2 = dialog.name2;
         foreach (string sentence in dialog.sentences)
         {
+            Debug.Log(sentence);
             dlTrig.info.sentences.Add(sentence);
         }
         dlTrig.info.nums = dialog.nums;

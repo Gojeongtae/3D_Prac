@@ -6,12 +6,18 @@ public class DialogueTrigger : MonoBehaviour
 {
     bool istri = false;
     public Dialogue info;
+    GameManager GManager;
 
     public void OnTriggerEnter(Collider other)
     {
+        GManager = FindObjectOfType<GameManager>();
+
         if (istri == false)
         {
-            Time.timeScale = 0;
+            if(GManager.GetPhase() == 10 || GManager.GetPhase() == 15)
+            {
+                Time.timeScale = 0;
+            }
             Trigger();
         }
 
