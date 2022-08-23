@@ -35,8 +35,5 @@ public class Behavior : MonoBehaviour
         Vector3 dirXZ = new Vector3(dir.x, 0f, dir.z);
         Quaternion targetRot = Quaternion.LookRotation(dirXZ);
         rigid.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, 550.0f * Time.deltaTime);
-        Effect.r   Quaternion.RotateTowards(Effect., targetRot, 550.0f * Time.deltaTime);
     }
-
-
 }

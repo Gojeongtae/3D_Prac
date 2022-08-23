@@ -20,6 +20,7 @@ public class DialogueTrigger : MonoBehaviour
     {
         istri = true;
         var system = FindObjectOfType<DialogueSystem>();
+        system.dialogueTrigger = this;
         system.Begin(info);
     }
     public void OffTrigger()

@@ -4,23 +4,13 @@ using UnityEngine;
 
 public class TriggerEvent : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
         {
-            GameManager GManager = FindObjectOfType<GameManager>();
-            GManager.PHASE++;
+            GameManager gameManager = FindObjectOfType<GameManager>();
+            int num = gameManager.GetPhase();
+            gameManager.SetPhase(++num);
             Destroy(gameObject);
         }
     }

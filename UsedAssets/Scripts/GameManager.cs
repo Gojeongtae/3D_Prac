@@ -1,16 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
+using System.Text;
 
 public class GameManager : MonoBehaviour
 {
-    //페이즈 및 재생성 관련 타이머 및 수치
-    public int PHASE = 0;
-    private float Timer_PHASE;
-    private float Timer_RESPAWN;
-    private float time_PHASE;
-    private float time_RESPAWN;
-
+    // **************************************************************************** Event Variables ************************************************************************************ //
     //파밍 이벤트 시 생성해야 할 GameObject
     public GameObject Heart;                // 하트 오브젝트
     public GameObject Star;                 // 별 오브젝트
@@ -58,11 +54,21 @@ public class GameManager : MonoBehaviour
     public Transform Boat_BigTransform;
     public Transform IslandTransform;
     public Transform RockTransform;
-
     public FadeInOut fadeInOut;
 
+    // ************************************************************************************* GamePlay Variables ********************************************************************************** //
+
     //플레이어 캐릭터
-    GameObject Player;
+    private GameObject Player;
+
+    //페이즈 및 재생성 관련 타이머 및 수치
+    public int PHASE = 0;
+    private float Timer_PHASE;
+    private float Timer_RESPAWN;
+    private float time_PHASE;
+    private float time_RESPAWN;
+
+    private Dialogues dialogs;
 
     // Start is called before the first frame update
     void Start()
@@ -74,14 +80,12 @@ public class GameManager : MonoBehaviour
         time_RESPAWN = 0.0f;
         Player = GameObject.FindGameObjectWithTag("Player");
 
+        ReadJson();
         //게임 시작 전 준비
         //이벤트 트리거 오브젝트 Transform 초기화
-        EvTriggerObjTransform.position = new Vector3(0f, 0f, -35.0f);
+        EvTriggerObjTransform.position = new Vector3(0f, 0f, -25.0f);
         EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
         StartCoroutine("EvTriggerObj_Gen");
-
-
-        //fadeInOut = GameObject.Find("FadeInOut").GetComponent<FadeInOut>();
     }
 
     // Update is called once per frame
@@ -90,32 +94,31 @@ public class GameManager : MonoBehaviour
         //게임 이벤트 전부 정리
         switch (PHASE)
         {
-            //********게임 시작 전********//
+            //******************************************** 게임 시작 전 ********************************************//
+            //******************************************************************************************************//
             case 0:
-                //페이드 인
-                Debug.Log("a");
+                if(fadeInOut != null)
+                    fadeInOut.StartCoroutine(fadeInOut.FadeIn(2));
                 break;
 
-            //********유아기*********//
+            //*********************************************** 유아기 ***********************************************//
+            //******************************************************************************************************//
             //Case 1 = 이동 튜토리얼
             //Case 2 = 하트 파밍
             //Case 3 = 흔들기 튜토리얼
             //Case 4 = 편지 든 병 띄우기
 
-            case 1:
+            case 1:     //클릭 이동 튜토리얼
 
-                // fadeInOut = GameObject.Find("FadeInOut").GetComponent<FadeInOut>();
-                fadeInOut.StartCoroutine(fadeInOut.FadeIn(2));
-                // Debug.Log("a");
-                //이동 튜토리얼
                 //부모와의 대화 출력 위한 작업
                 if (FindObjectOfType<DialogueTrigger>() == null)
                 {
+                    //대화 내용 추가
                     DlTriggerObjTransform.position = new Vector3(0f, 0.0f, -10f);
                     DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-                    StartCoroutine("DlTriggerObj_Gen");
+                    StartCoroutine("DlTriggerObj_Gen", dialogs.Items[0]);
                 }
-
+                
                 //하트 파밍 이벤트로의 전환 준비
                 if (FindObjectOfType<TriggerEvent>() == null)
                 {
@@ -125,16 +128,14 @@ public class GameManager : MonoBehaviour
                 }
                 break;
 
-            case 2:
-                // 하트 파밍
-                //페이즈 타이머의 길이동안 이벤트 실행
-                //이벤트 실행되는 동안 스폰 주기때마다 하트 재생성
-                //두 개의 타이머를 활용, 페이즈 타이머인 40초가 되었을 때 다음 페이즈
-                //리스폰 타이머는 특정 시간(여기서는 3초)마다 새로운 오브젝트를 생성
-
+            case 2:     // 하트 파밍 이벤트
+                
                 fadeInOut.StartCoroutine(fadeInOut.FadeIn(2));
+
+                //페이즈 타이머의 길이동안 이벤트 실행
                 if (time_PHASE <= Timer_PHASE)
                 {
+                    //이벤트 실행되는 동안 스폰 주기마다 하트 재생성
                     if (time_RESPAWN < Timer_RESPAWN)
                     {
                         time_RESPAWN += Time.deltaTime;
@@ -146,6 +147,7 @@ public class GameManager : MonoBehaviour
                     }
                     time_PHASE += Time.deltaTime;
                 }
+                //다음 페이즈로의 이동
                 else
                 {
                     PHASE = 3;
@@ -155,16 +157,77 @@ public class GameManager : MonoBehaviour
                 break;
 
             case 3:     //흔들기 튜토리얼
-                break;
-            case 4:     //편지 든 병 띄우기 이벤트
+
+                //흔들기 페이즈 길이 (60초)
+                Timer_PHASE = 60.0f;
+                
+                if (time_PHASE <= Timer_PHASE)
+                {
+                    //흔들기 튜토리얼 시작 후 10초 뒤 대화 시작
+                    if (time_PHASE == 10.0f)
+                    {
+                        DlTriggerObjTransform.position = Player.GetComponent<Transform>().position;
+                        DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+                        StartCoroutine("dlTriggerObj_Gen");
+                    }
+                    //흔들기 튜토리얼 실행
+                    if(time_PHASE >= 12.0f)
+                    {
+                        if(Player.GetComponent<Shake>().getCase3Count() <= 5)
+                        {
+                            Player.GetComponent<Shake>().ShakeByPhase(PHASE);
+                        }
+                    }
+                    time_PHASE += Time.deltaTime;
+                }
+                else
+                {
+                    //다음 페이즈로의 이동
+                    PHASE = 4;
+
+                    //타이머 변수 초기화
+                    time_PHASE = 0.0f;
+                    time_RESPAWN = 0.0f;
+                    Timer_PHASE = 0.0f;
+                    Timer_RESPAWN = 0.0f;
+                }
                 break;
 
-            //********청소년기*********//
-            //Case 5 = 별 파밍
-            //Case 6 = 큰 별 파밍
-            //Case 7 = 독립
-            case 5:     //별 파밍 이벤트
-                //하트 파밍 이벤트와 동일, 파밍되는 
+            case 4:     //편지 든 병 띄우기 이벤트
+                
+                //편지 띄우기 전 대화
+                if (FindObjectOfType<DialogueTrigger>() == null)
+                {
+                    DlTriggerObjTransform.position = new Vector3(0f, 0.0f, -10f);
+                    DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+                    StartCoroutine("DlTriggerObj_Gen");
+                }
+
+
+                //편지 띄운 후 대화
+                if (FindObjectOfType<DialogueTrigger>() == null)
+                {
+                    DlTriggerObjTransform.position = new Vector3(0f, 0.0f, -10f);
+                    DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+                    StartCoroutine("DlTriggerObj_Gen");
+                }
+                //하트 파밍 이벤트로의 전환 준비
+                if (FindObjectOfType<TriggerEvent>() == null)
+                {
+                    EvTriggerObjTransform.position = new Vector3(0f, 0f, 10.0f);
+                    EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+                    StartCoroutine("EvTriggerObj_Gen");
+                }
+                break;
+
+            //********************************************** 청소년기 **********************************************//
+            //******************************************************************************************************//
+            //노 젓기 튜토리얼 -> 별 파밍 이벤트 -> 큰 별 파밍 이벤트 -> 독립 이벤트
+            
+            case 5:     //노 젓기 (클릭-드래그 이동) 튜토리얼
+                break;
+
+            case 6:     //별 파밍 이벤트
                 if (time_PHASE <= Timer_PHASE)
                 {
                     if (time_RESPAWN < Timer_RESPAWN)
@@ -183,7 +246,8 @@ public class GameManager : MonoBehaviour
                     PHASE = 6;
                 }
                 break;
-            case 6:     //큰 별 파밍 이벤트
+
+            case 7:     //큰 별 파밍 이벤트
                 if (time_PHASE <= Timer_PHASE)
                 {
                     if (time_RESPAWN < Timer_RESPAWN)
@@ -202,33 +266,104 @@ public class GameManager : MonoBehaviour
                     PHASE = 7;
                 }
                 break;
-            case 7:     //독립 이벤트
+
+            case 8:     //독립 이벤트
+                //아들과 부모와의 대화
+                if (FindObjectOfType<DialogueTrigger>() == null)
+                {
+                    DlTriggerObjTransform.position = new Vector3(0f, 0.0f, -10f);
+                    DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+                    StartCoroutine("DlTriggerObj_Gen");
+                }
+
+                //하트 파밍 이벤트로의 전환 준비
+                if (FindObjectOfType<TriggerEvent>() == null)
+                {
+                    EvTriggerObjTransform.position = new Vector3(0f, 0f, 10.0f);
+                    EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+                    StartCoroutine("EvTriggerObj_Gen");
+                }
                 break;
 
-            //********성년기*********//
-            //Case 8 = 돈 파밍
-            //Case 9 = 갈매기 NPC 이벤트
-            //Case 10 = 경쟁자 이벤트
-            //Case 11 = 소용돌이 이벤트
-            //Case 12 = 빙하 이벤트
-            //Case 13 = 번개 이벤트
-            //Case 14 = 거북이 NPC 이벤트
-            //Case 15 = 별의 승천
-            //Case 16 = 연인 이벤트 1
-            //Case 17 = 연인 이벤트 2
+            //******************************************** 성년기 **************************************************//
+            //******************************************************************************************************//
+            //돈 파밍 이벤트  -> 갈매기 NPC 이벤트  -> 경쟁자 이벤트      -> 소용돌이 이벤트     -> 빙하 이벤트   -> 
+            //번개 이벤트     -> 거북이 NPC 이벤트  -> 별의 승천 이벤트   -> 연인 이벤트 1(만남) -> 연인 이벤트 2(프로포즈)
 
-            case 8: //돈 파밍 이벤트
+            case 9:     //돈 파밍 이벤트
                 break;
 
-            //********노년기********//
-            //Case 18 = 
+            case 10:     //갈매기 NPC 이벤트
+                break;
 
+            case 11:    //경쟁자 이벤트
+                break;
+
+            case 12:    //소용돌이 이벤트
+                break;
+
+            case 13:    //빙하 이벤트
+                break;
+
+            case 14:    //번개 이벤트
+                break;
+
+            case 15:    //거북이 NPC 이벤트
+                break;
+
+            case 16:    //별의 승천 이벤트
+                break;
+
+            case 17:    //연인 이벤트 1(만남)
+                break;
+
+            case 18:    //연인 이벤트 2(프로포즈)
+                break;  
+
+            //******************************************** 노년기 **************************************************//
+            //******************************************************************************************************//
+            case 19:    //아내의 아픔
+                break;
+
+            case 20:    //절규 이벤트
+                break;
+
+            case 21:    //엔딩
+                break;
 
             default:    //아무 의미 없는 Default값 
                 break;
         }
     }
 
+    //************************************************************************************* FUNCTIONS *****************************************************************************************//
+    public int GetPhase()
+    {
+        return this.PHASE;
+    }
+
+    public void SetPhase(int num)
+    {
+        this.PHASE = num;
+    }
+
+    public void ReadJson()
+    {
+        string fileName = "DialogTable";
+        string path = Application.dataPath + "/UsedAssets/" + fileName + ".Json";
+
+        FileInfo fi = new FileInfo(path);
+        if (fi.Exists == false)
+        {
+            Debug.LogError($"Failed to read {fi.Name}");
+        }
+
+        string jsonstr = File.ReadAllText(fi.FullName);
+
+        dialogs = JsonUtility.FromJson<Dialogues>(jsonstr);
+    }
+
+    // ************************************************************************************ COROUTINES *****************************************************************************************//
     // 파밍 이벤트 시 호출하여야 할 Coroutine 목록
     // 하트, 별, 큰 별, 돈, 음표, 연인 이벤트 시 꽃 오브젝트, 백합 오브젝트 
     IEnumerator Heart_Gen()
@@ -239,8 +374,6 @@ public class GameManager : MonoBehaviour
         //범위 설정 (min, Max값)
         float min = 50.0f;
         float max = 100.0f;
-
-
 
         //하트 오브젝트 10개 생성
         int i = 0;
@@ -373,13 +506,23 @@ public class GameManager : MonoBehaviour
 
         yield return null;
     }
-    IEnumerator DlTriggerObj_Gen()
+    IEnumerator DlTriggerObj_Gen(Dialogue dialog)
     {
         GameObject instantDlTrigObj = Instantiate(DialogueTriggerObject, DlTriggerObjTransform.position, DlTriggerObjTransform.rotation);
-        Rigidbody EvTrigObjRigid = instantDlTrigObj.GetComponent<Rigidbody>();
+
+        DialogueTrigger dlTrig = instantDlTrigObj.GetComponent<DialogueTrigger>();
+
+        dlTrig.info.index = dialog.index;
+        dlTrig.info.phase = dialog.phase;
+        dlTrig.info.name = dialog.name;
+        dlTrig.info.name2 = dialog.name2;
+        foreach (string sentence in dialog.sentences)
+        {
+            dlTrig.info.sentences.Add(sentence);
+        }
+        dlTrig.info.nums = dialog.nums;
 
         yield return null;
     }
-
 }
 

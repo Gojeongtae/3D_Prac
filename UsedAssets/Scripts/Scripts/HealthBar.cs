@@ -24,7 +24,7 @@ public class HealthBar : MonoBehaviour
     }
     private void Update()
     {
-        Debug.Log(prev);
+        //Debug.Log(prev);
         curr = UIBar.instance.count;
         if (prev != curr)
         {
