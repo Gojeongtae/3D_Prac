@@ -70,7 +70,7 @@ public class DialogueSystem : MonoBehaviour
     {
         Time.timeScale = 1;
         txtSentence.text = string.Empty;
-        Target.SetActive(false);
         dialogueTrigger.OffTrigger();
+        Target.SetActive(false);
     }
 }

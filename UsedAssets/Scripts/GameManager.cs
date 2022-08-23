@@ -76,9 +76,12 @@ public class GameManager: MonoBehaviour
 
         //게임 시작 전 준비
         //이벤트 트리거 오브젝트 Transform 초기화
-        EvTriggerObjTransform.position = new Vector3(0f, 0f, -25.0f);
+        EvTriggerObjTransform.position = new Vector3(0f, 0f, -35.0f);
         EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
         StartCoroutine("EvTriggerObj_Gen");
+
+
+        //fadeInOut = GameObject.Find("FadeInOut").GetComponent<FadeInOut>();
     }
 
     // Update is called once per frame
@@ -89,12 +92,9 @@ public class GameManager: MonoBehaviour
         {
             //********게임 시작 전********//
             case 0:
-                //Fade In, Fade Out - NullReferenceException 해결 완료
-                if(GameObject.Find("FadeInOut") != null)
-                {
-                    fadeInOut = GameObject.Find("FadeInOut").GetComponent<FadeInOut>();
-                    fadeInOut.StartCoroutine(fadeInOut.FadeInStart());
-                }                  
+                //페이드 인
+                fadeInOut.StartCoroutine(fadeInOut.FadeInStart());
+                Debug.Log("a");
                 break;
 
             //********유아기*********//
@@ -104,8 +104,12 @@ public class GameManager: MonoBehaviour
             //Case 4 = 편지 든 병 띄우기
 
             case 1:
+                // fadeInOut = GameObject.Find("FadeInOut").GetComponent<FadeInOut>();
+                // fadeInOut.StartCoroutine(fadeInOut.FadeInStart());
+                // Debug.Log("a");
                 //이동 튜토리얼
                 //부모와의 대화 출력 위한 작업
+                fadeInOut.StartCoroutine(fadeInOut.FadeInStart());
                 if (FindObjectOfType<DialogueTrigger>() == null)
                 {
                     DlTriggerObjTransform.position = new Vector3(0f, 0.0f, -10f);
@@ -150,28 +154,7 @@ public class GameManager: MonoBehaviour
                 break;
 
             case 3:     //흔들기 튜토리얼
-                Timer_PHASE = 60.0f;
-                
-                if (time_PHASE <= Timer_PHASE)
-                {
-                    if (time_PHASE == 10.0f)
-                    {
-                        DlTriggerObjTransform.position = Player.GetComponent<Transform>().position;
-                        EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-                        StartCoroutine("dlTriggerObj_Gen");
-                    }
-                    if(time_PHASE >= 12.0f)
-                    {
-                        if(Player.GetComponent<Shake>().getCase3Count() <= 5)
-                        {
-                            Player.GetComponent<Shake>().ShakeByPhase(PHASE);
-                        }
-                    }
-                    time_PHASE += Time.deltaTime;
-                }
-                
                 break;
-
             case 4:     //편지 든 병 띄우기 이벤트
                 break;
 
@@ -245,16 +228,6 @@ public class GameManager: MonoBehaviour
         }
     }
 
-    public int getPhase()
-    {
-        return PHASE;
-    }
-
-    public void setPhase(int num)
-    {
-        PHASE = num;
-    }
-
     // 파밍 이벤트 시 호출하여야 할 Coroutine 목록
     // 하트, 별, 큰 별, 돈, 음표, 연인 이벤트 시 꽃 오브젝트, 백합 오브젝트 
     IEnumerator Heart_Gen()
@@ -265,6 +238,8 @@ public class GameManager: MonoBehaviour
         //범위 설정 (min, Max값)
         float min = 50.0f;
         float max = 100.0f;
+
+
 
         //하트 오브젝트 10개 생성
         int i = 0;
