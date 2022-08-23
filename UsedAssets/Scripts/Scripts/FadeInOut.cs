@@ -5,36 +5,28 @@ using UnityEngine.UI;
 
 public class FadeInOut : MonoBehaviour
 {
-    public GameObject FadePannel;
+    public Image image;
 
-    void Start()
+    public IEnumerator FadeIn(float time)
     {
-    }
-
-    //페이드 아웃
-    public IEnumerator FadeInStart()
-    {
-        FadePannel.SetActive(true);
-        for (float f = 1f; f > 0; f -= 0.02f)
+        //투명
+        Color color = image.color;
+        while (color.a > 0f)
         {
-            Color c = FadePannel.GetComponent<Image>().color;
-            c.a = f;
-            FadePannel.GetComponent<Image>().color = c;
+            color.a -= Time.deltaTime / time;
+            image.color = color;
             yield return null;
         }
-        yield return new WaitForSeconds(1);
-        FadePannel.SetActive(false);
     }
 
-    //페이드 인
-    public IEnumerator FadeOutStart()
+    public IEnumerator FadeOut(float time)
     {
-        FadePannel.SetActive(true);
-        for (float f = 0f; f < 1; f += 0.02f)
+        //검은 화면
+        Color color = image.color;
+        while (color.a < 1f)
         {
-            Color c = FadePannel.GetComponent<Image>().color;
-            c.a = f;
-            FadePannel.GetComponent<Image>().color = c;
+            color.a += Time.deltaTime / time;
+            image.color = color;
             yield return null;
         }
     }

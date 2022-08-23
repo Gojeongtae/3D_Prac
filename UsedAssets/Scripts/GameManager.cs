@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager: MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     //페이즈 및 재생성 관련 타이머 및 수치
     public int PHASE = 0;
@@ -93,7 +93,6 @@ public class GameManager: MonoBehaviour
             //********게임 시작 전********//
             case 0:
                 //페이드 인
-                fadeInOut.StartCoroutine(fadeInOut.FadeInStart());
                 Debug.Log("a");
                 break;
 
@@ -104,21 +103,21 @@ public class GameManager: MonoBehaviour
             //Case 4 = 편지 든 병 띄우기
 
             case 1:
+
                 // fadeInOut = GameObject.Find("FadeInOut").GetComponent<FadeInOut>();
-                // fadeInOut.StartCoroutine(fadeInOut.FadeInStart());
+                fadeInOut.StartCoroutine(fadeInOut.FadeIn(2));
                 // Debug.Log("a");
                 //이동 튜토리얼
                 //부모와의 대화 출력 위한 작업
-                fadeInOut.StartCoroutine(fadeInOut.FadeInStart());
                 if (FindObjectOfType<DialogueTrigger>() == null)
                 {
                     DlTriggerObjTransform.position = new Vector3(0f, 0.0f, -10f);
                     DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
                     StartCoroutine("DlTriggerObj_Gen");
                 }
-                
+
                 //하트 파밍 이벤트로의 전환 준비
-                if(FindObjectOfType<TriggerEvent>() == null)
+                if (FindObjectOfType<TriggerEvent>() == null)
                 {
                     EvTriggerObjTransform.position = new Vector3(0f, 0f, 10.0f);
                     EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
@@ -126,12 +125,14 @@ public class GameManager: MonoBehaviour
                 }
                 break;
 
-            case 2: 
+            case 2:
                 // 하트 파밍
                 //페이즈 타이머의 길이동안 이벤트 실행
                 //이벤트 실행되는 동안 스폰 주기때마다 하트 재생성
                 //두 개의 타이머를 활용, 페이즈 타이머인 40초가 되었을 때 다음 페이즈
                 //리스폰 타이머는 특정 시간(여기서는 3초)마다 새로운 오브젝트를 생성
+
+                fadeInOut.StartCoroutine(fadeInOut.FadeIn(2));
                 if (time_PHASE <= Timer_PHASE)
                 {
                     if (time_RESPAWN < Timer_RESPAWN)
@@ -374,10 +375,11 @@ public class GameManager: MonoBehaviour
     }
     IEnumerator DlTriggerObj_Gen()
     {
-        GameObject instantDlTrigObj = Instantiate(DialogueTriggerObject, DlTriggerObjTransform.position, DlTriggerObjTransform.rotation) ;
+        GameObject instantDlTrigObj = Instantiate(DialogueTriggerObject, DlTriggerObjTransform.position, DlTriggerObjTransform.rotation);
         Rigidbody EvTrigObjRigid = instantDlTrigObj.GetComponent<Rigidbody>();
 
         yield return null;
     }
+
 }
 

@@ -34,11 +34,12 @@ public class Respawn : MonoBehaviour
 
     IEnumerator RespawnFade()
     {
-        fadeInOut.StartCoroutine(fadeInOut.FadeOutStart());
-        yield return new WaitForSeconds(3f);
-        other.transform.position = new Vector3(0, 0, 0);
+        fadeInOut.StartCoroutine(fadeInOut.FadeOut(2f));
 
-        fadeInOut.StartCoroutine(fadeInOut.FadeInStart());
+        yield return new WaitForSeconds(2f);
+        other.transform.position = new Vector3(0, 0, -10);
+        fadeInOut.StartCoroutine(fadeInOut.FadeIn(2f));
+
         yield return null;
     }
 }
