@@ -60,17 +60,21 @@ public class GameManager : MonoBehaviour
 
     //플레이어 캐릭터
     private GameObject Player;
+    private GameObject Boat;
 
     //페이즈 및 재생성 관련 타이머 및 수치
-    public int PHASE = 7;
+    private int PHASE = 0;
     private float Timer_PHASE;
     private float Timer_RESPAWN;
     private float time_PHASE;
     private float time_RESPAWN;
 
-    private Dialogues dialogs;
-
     public FadeInOut fadeInOut;
+
+    //페이즈별 Dialogues의 페이즈, 인덱스 계산
+    private Dialogues dialogs;
+    private int dialogIndex = 0;
+
 
     //페이즈별 오브젝트 등장 개수 제한
     private int LStar_Count = 0;
@@ -83,7 +87,9 @@ public class GameManager : MonoBehaviour
         Timer_RESPAWN = 5.0f;
         time_PHASE = 0.0f;
         time_RESPAWN = 0.0f;
+
         Player = GameObject.FindGameObjectWithTag("Player");
+        Boat = GameObject.FindGameObjectWithTag("Boat");
 
         //Read
         ReadJson();
@@ -103,9 +109,9 @@ public class GameManager : MonoBehaviour
                 if (fadeInOut != null)
                     fadeInOut.StartCoroutine(fadeInOut.FadeIn(2));
 
-                if (FindObjectOfType<TriggerEvent>() != null)
+                if (FindObjectOfType<TriggerEvent>() == null)
                 {
-                    EvTriggerObjTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y + 20.0f, playerTransform.position.z);
+                    EvTriggerObjTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 10.0f);
                     EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
                     StartCoroutine("EvTriggerObj_Gen");
                 }
@@ -113,34 +119,36 @@ public class GameManager : MonoBehaviour
 
             //*********************************************** 유아기 ***********************************************//
             //******************************************************************************************************//
-            //Case 1 = 이동 튜토리얼
-            //Case 2 = 하트 파밍
-            //Case 3 = 흔들기 튜토리얼
-            //Case 4 = 편지 든 병 띄우기
+            //이동 튜토리얼 -> 하트 파밍    -> 흔들기 튜토리얼 -> 편지 든 병 띄우기
+            
 
             case 1:     //클릭 이동 튜토리얼
 
                 //부모와의 대화 출력 위한 작업
                 if (FindObjectOfType<DialogueTrigger>() == null)
                 {
+                    Dialogue dialog = new Dialogue();
                     //대화 내용 추가
-                    DlTriggerObjTransform.position = new Vector3(0f, 0.0f, -10f);
-                    DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-                    StartCoroutine("DlTriggerObj_Gen", dialogs.Items[0]);
+                    DlTriggerObjTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 20.0f);
+                    DlTriggerObjTransform.rotation = Quaternion.Euler(Vector3.zero);
+                    dialog = chooseDialog();
+
+                    if(dialog.sentences != null) 
+                    {
+                        StartCoroutine("DlTriggerObj_Gen", dialog);
+                    }
                 }
                 
                 //하트 파밍 이벤트로의 전환 준비
-                if (FindObjectOfType<TriggerEvent>() == null)
+                if (FindObjectOfType<TriggerEvent>() == null && FindObjectOfType<DialogueTrigger>() == null)
                 {
-                    EvTriggerObjTransform.position = new Vector3(0f, 0f, 10.0f);
-                    EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+                    EvTriggerObjTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 15.0f);
+                    EvTriggerObjTransform.rotation = Quaternion.Euler(Vector3.zero);
                     StartCoroutine("EvTriggerObj_Gen");
                 }
                 break;
 
             case 2:     // 하트 파밍 이벤트
-                
-                fadeInOut.StartCoroutine(fadeInOut.FadeIn(2));
 
                 //페이즈 타이머의 길이동안 이벤트 실행
                 if (time_PHASE <= Timer_PHASE)
@@ -169,23 +177,30 @@ public class GameManager : MonoBehaviour
             case 3:     //흔들기 튜토리얼
 
                 //흔들기 페이즈 길이 (60초)
-                Timer_PHASE = 60.0f;
+                Timer_PHASE = 199999999.0f;
                 
                 if (time_PHASE <= Timer_PHASE)
                 {
                     //흔들기 튜토리얼 시작 후 10초 뒤 대화 시작
-                    if (time_PHASE == 10.0f)
+                    if (time_PHASE == 0.0f)
                     {
+                        Dialogue dialog = new Dialogue();
+
                         DlTriggerObjTransform.position = Player.GetComponent<Transform>().position;
                         DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-                        StartCoroutine("dlTriggerObj_Gen");
+                        dialog = chooseDialog();
+
+                        if (dialog.sentences != null)
+                        {
+                            StartCoroutine("DlTriggerObj_Gen", dialog);
+                        }
                     }
                     //흔들기 튜토리얼 실행
-                    if(time_PHASE >= 12.0f)
+                    if(time_PHASE >= 2.0f)
                     {
-                        if(Player.GetComponent<Shake>().getCase3Count() <= 5)
+                        if(Boat.GetComponent<Shake>().getCase3Count() <= 5)
                         {
-                            Player.GetComponent<Shake>().ShakeByPhase(PHASE);
+                            Boat.GetComponent<Shake>().ShakeByPhase(PHASE);
                         }
                     }
                     time_PHASE += Time.deltaTime;
@@ -404,29 +419,35 @@ public class GameManager : MonoBehaviour
                     time_PHASE += Time.deltaTime;
                 }
                 else
-                {
-                    PHASE = 16;
-                }*/
+                {*/
+                PHASE = 16;
+                
                 break;
 
             case 16:    //별의 승천 이벤트
+                PHASE = 17;
                 break;
 
             case 17:    //연인 이벤트 1(만남)
+                PHASE = 18;
                 break;
 
             case 18:    //연인 이벤트 2(프로포즈)
+                PHASE = 19;
                 break;  
 
             //******************************************** 노년기 **************************************************//
             //******************************************************************************************************//
             case 19:    //아내의 아픔
+                PHASE = 20;
                 break;
 
             case 20:    //절규 이벤트
+                PHASE = 21;
                 break;
 
             case 21:    //엔딩
+                PHASE = 22;
                 break;
 
             default:    //아무 의미 없는 Default값 
@@ -435,6 +456,8 @@ public class GameManager : MonoBehaviour
     }
 
     //************************************************************************************* FUNCTIONS *****************************************************************************************//
+    
+    //Getter, Setter
     public int GetPhase()
     {
         return this.PHASE;
@@ -443,6 +466,16 @@ public class GameManager : MonoBehaviour
     public void SetPhase(int num)
     {
         this.PHASE = num;
+    }
+
+    public int GetDialogIndex()
+    {
+        return this.dialogIndex;
+    }
+
+    public void SetDialogIndex(int num)
+    {
+        this.dialogIndex = num;
     }
 
     public void ReadJson()
@@ -459,6 +492,28 @@ public class GameManager : MonoBehaviour
         string jsonstr = File.ReadAllText(fi.FullName);
 
         dialogs = JsonUtility.FromJson<Dialogues>(jsonstr);
+    }
+
+    public Dialogue chooseDialog()
+    {
+        Dialogue result = new Dialogue();
+
+        foreach (Dialogue dialog in dialogs.Items)
+        {
+            if (dialog.phase == PHASE)
+            {
+                if (dialog.index == dialogIndex)
+                {
+                    result = dialog;
+                }
+            }
+        }
+        dialogIndex++;
+        if(result == null)
+        {
+            Debug.LogError("The Dialogue Object has null value");
+        }
+        return result;
     }
 
     // ************************************************************************************ COROUTINES *****************************************************************************************//

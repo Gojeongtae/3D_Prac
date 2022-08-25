@@ -34,6 +34,7 @@ public class DialogueTrigger : MonoBehaviour
         istri = false;
         BoxCollider colliderA = GetComponent<BoxCollider>();
         colliderA.enabled = false;
+        Destroy(gameObject);
     }
    
 }

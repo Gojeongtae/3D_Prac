@@ -11,10 +11,8 @@ public class DialogueSystem : MonoBehaviour
     public GameObject dialogue;
     public DialogueTrigger dialogueTrigger;
 
-
     public GameObject dialogueL;
     public GameObject dialogueR;
-
 
     Queue<string> sentences = new Queue<string>();
     Queue<int> nums = new Queue<int>();
@@ -23,6 +21,25 @@ public class DialogueSystem : MonoBehaviour
     string name2;
 
     private int Ivent; //현재의 말풍선 상태 
+
+    private bool isNextStart = false;
+    private float Timer = 0.0f;
+
+    private void Update()
+    {
+        if(isNextStart == true)
+        {
+            if (Timer >= 2.0f)
+            {
+                Next();
+            }
+            else
+            {
+                Timer += Time.deltaTime;
+            }
+
+        }
+    }
 
     public void Begin(Dialogue info)
     {
@@ -43,13 +60,17 @@ public class DialogueSystem : MonoBehaviour
         Next(); 
     }
 
+
+
     public void Next()
     {
         if (sentences.Count == 0)
         {
+            isNextStart = false;
             End();
             return;
         }
+        isNextStart = true;
         txtSentence.text = sentences.Dequeue();
         Ivent = nums.Dequeue();
 
@@ -65,12 +86,13 @@ public class DialogueSystem : MonoBehaviour
             dialogueR.SetActive(false);
             txtName.text = name2;
         }
+        Timer = 0f;
     }
     public void End()
     {
         Time.timeScale = 1;
         txtSentence.text = string.Empty;
-        //dialogueTrigger.OffTrigger();
         Target.SetActive(false);
+        dialogueTrigger.OffTrigger();
     }
 }

@@ -24,7 +24,7 @@ public class Control : MonoBehaviour
         //√ ±‚»≠
         heartInt = 5;
         heartMax = 20;
-
+        isTime = false;
 
         behavior = GetComponent<Behavior>();
         mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -68,6 +68,10 @@ public class Control : MonoBehaviour
                 }
             }
         }
+        else
+        {
+
+        }
     }
 
     void Fishing()
@@ -110,8 +114,8 @@ public class Control : MonoBehaviour
         }
         if (other.tag == "Heart")
         {
-            isTime = true;
             heart = other.gameObject;
+            isTime = true;
             if (heartInt > heartMax)
                 heartInt = heartMax;
         }      
@@ -129,7 +133,11 @@ public class Control : MonoBehaviour
     {
         if (other.tag == "Heart")
         {
+            heart = other.gameObject;
+            heart.GetComponent<Object>().speed = 5.0f;
+            heart.GetComponent<Object>().rotSpeed = 100.0f;
             isTime = false;
+            
         }
     }
 }
