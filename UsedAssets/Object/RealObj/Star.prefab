@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1996064546979950823}
   - component: {fileID: 1996064546979950822}
   - component: {fileID: -4419369860198501080}
+  - component: {fileID: -9122316830451449737}
   m_Layer: 6
   m_Name: Star
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1996064546979950816}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 21.720154, y: 0, z: 96.57439}
+  m_LocalPosition: {x: 12.127011, y: 0, z: 82.346634}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -98,3 +99,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 2
   rotSpeed: 100
+  Rotis: 0
+--- !u!65 &-9122316830451449737
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1996064546979950816}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.010929942, y: 0.010074628, z: 0.004454432}
+  m_Center: {x: 0.00000034994446, y: 0.00035375575, z: -0.000013954825}

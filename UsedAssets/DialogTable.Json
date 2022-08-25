@@ -20,14 +20,14 @@
       "phase": 2,
       "index": 1,
       "name": "엄마",
-      "sentenses": [ "건강하게만 자라주렴" ],
+      "sentences": [ "건강하게만 자라주렴" ],
       "nums": [ 1 ]
     },
     {
       "phase": 2,
       "index": 2,
       "name": "아빠",
-      "sentenses": [ "정말 사랑한단다 얘야" ],
+      "sentences": [ "정말 사랑한단다 얘야" ],
       "nums": [ 1 ]
     },
     {
@@ -35,43 +35,43 @@
       "index": 0,
       "name": "엄마",
       "name2": "아빠",
-      "sentenses": [ "이런…아이가 깨버렸군", "배를 흔들어서 다시 재워야겠어요" ],
+      "sentences": [ "이런…아이가 깨버렸군", "배를 흔들어서 다시 재워야겠어요" ],
       "nums": [ 2, 1 ]
     },
     {
       "phase": 3,
       "index": 1,
       "name": "엄마",
-      "sentenses": [ "자장 자장 우리 아기…" ],
+      "sentences": [ "자장 자장 우리 아기…" ],
       "nums": [ 1 ]
     },
     {
       "phase": 3,
       "index": 2,
       "name": "엄마",
-      "sentenses": [ "잘도 잔다 우리 아기…" ],
-      "nums": [ 2 ]
+      "sentences": [ "잘도 잔다 우리 아기…" ],
+      "nums": [ 1 ]
     },
     {
       "phase": 3,
       "index": 3,
       "name": "엄마",
-      "sentenses": [ "자장 자장 우리 아기…" ],
+      "sentences": [ "자장 자장 우리 아기…" ],
       "nums": [ 1 ]
     },
     {
       "phase": 3,
       "index": 4,
       "name": "엄마",
-      "sentenses": [ "잘도 잔다 우리 아기…" ],
-      "nums": [ 2 ]
+      "sentences": [ "잘도 잔다 우리 아기…" ],
+      "nums": [ 1 ]
     },
     {
       "phase": 3,
       "index": 5,
       "name": "엄마",
       "name2": "아빠",
-      "sentenses": [
+      "sentences": [
         "다시 잠들었어",
         "정말 당신을 꼭 닮았어요",
         "고마워",
@@ -84,7 +84,7 @@
       "index": 0,
       "name": "엄마",
       "name2": "아빠",
-      "sentenses": [
+      "sentences": [
         "오늘도 일기를 띄우는 건가요?",
         "응, 오늘 하루는 다시 오지 않을테니까"
       ],
@@ -95,7 +95,7 @@
       "index": 1,
       "name": "엄마",
       "name2": "아빠",
-      "sentenses": [ "오늘도 좋은 하루였어요", "당신과 얘 덕분이야…" ],
+      "sentences": [ "오늘도 좋은 하루였어요", "당신과 얘 덕분이야…" ],
       "nums": [ 1, 2 ]
     },
     {
@@ -104,7 +104,7 @@
       "name": "엄마",
       "name2": "아빠",
       "name3": "나",
-      "sentenses": [
+      "sentences": [
         "무엇이든 처음은 힘들어",
         "그러니 완벽하지 않아도 된단다",
         "다시 해볼께요…"
@@ -115,14 +115,14 @@
       "phase": 5,
       "index": 1,
       "name": "엄마",
-      "sentenses": [ "잘했어!" ],
+      "sentences": [ "잘했어!" ],
       "nums": [ 1 ]
     },
     {
       "phase": 5,
       "index": 2,
       "name": "아빠",
-      "sentenses": [ "그렇지!" ],
+      "sentences": [ "그렇지!" ],
       "nums": [ 2 ]
     },
     {
@@ -131,7 +131,7 @@
       "name": "엄마",
       "name2": "아빠",
       "name3": "나",
-      "sentenses": [
+      "sentences": [
         "지금 흐르는 물체는 뭐죠?",
         "꿈이란다",
         "꿈이 뭐죠?",
@@ -147,7 +147,7 @@
       "name": "엄마",
       "name2": "아빠",
       "name3": "나",
-      "sentenses": [
+      "sentences": [
         "가슴을 활짝 펴고 살도록 하렴",
         "저 혼자서도 잘 해낼 수 있을까요?",
         "당연하지! 넌 잘 할 수 있어",

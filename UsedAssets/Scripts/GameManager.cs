@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         //Variable Initializing
-        Timer_PHASE = 40.0f;
+        Timer_PHASE = 30.0f;
         Timer_RESPAWN = 5.0f;
         time_PHASE = 0.0f;
         time_RESPAWN = 0.0f;
@@ -98,6 +98,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(PHASE);
         Transform playerTransform = Player.GetComponent<Transform>();
 
         //게임 이벤트 전부 정리
@@ -120,25 +121,16 @@ public class GameManager : MonoBehaviour
             //*********************************************** 유아기 ***********************************************//
             //******************************************************************************************************//
             //이동 튜토리얼 -> 하트 파밍    -> 흔들기 튜토리얼 -> 편지 든 병 띄우기
-            
+
 
             case 1:     //클릭 이동 튜토리얼
 
                 //부모와의 대화 출력 위한 작업
                 if (FindObjectOfType<DialogueTrigger>() == null)
                 {
-                    Dialogue dialog = new Dialogue();
-                    //대화 내용 추가
-                    DlTriggerObjTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 20.0f);
-                    DlTriggerObjTransform.rotation = Quaternion.Euler(Vector3.zero);
-                    dialog = chooseDialog();
-
-                    if(dialog.sentences != null) 
-                    {
-                        StartCoroutine("DlTriggerObj_Gen", dialog);
-                    }
+                    GenerateDialogue();
                 }
-                
+
                 //하트 파밍 이벤트로의 전환 준비
                 if (FindObjectOfType<TriggerEvent>() == null && FindObjectOfType<DialogueTrigger>() == null)
                 {
@@ -166,7 +158,7 @@ public class GameManager : MonoBehaviour
                     time_PHASE += Time.deltaTime;
                 }
                 //다음 페이즈로의 이동
-                else
+                else 
                 {
                     PHASE = 3;
                     time_PHASE = 0.0f;
@@ -177,31 +169,27 @@ public class GameManager : MonoBehaviour
             case 3:     //흔들기 튜토리얼
 
                 //흔들기 페이즈 길이 (60초)
-                Timer_PHASE = 199999999.0f;
-                
+                Timer_PHASE = 10.0f;
+
                 if (time_PHASE <= Timer_PHASE)
                 {
                     //흔들기 튜토리얼 시작 후 10초 뒤 대화 시작
                     if (time_PHASE == 0.0f)
                     {
-                        Dialogue dialog = new Dialogue();
-
-                        DlTriggerObjTransform.position = Player.GetComponent<Transform>().position;
-                        DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-                        dialog = chooseDialog();
-
-                        if (dialog.sentences != null)
-                        {
-                            StartCoroutine("DlTriggerObj_Gen", dialog);
-                        }
+                        GenerateDialogue();
                     }
                     //흔들기 튜토리얼 실행
-                    if(time_PHASE >= 2.0f)
+                    if (time_PHASE >= 1.0f && FindObjectOfType<DialogueTrigger>() == null)
                     {
-                        if(Boat.GetComponent<Shake>().getCase3Count() <= 5)
+                        if (Boat.GetComponent<Shake>().getCase3Count() <= 4)
                         {
                             Boat.GetComponent<Shake>().ShakeByPhase(PHASE);
                         }
+                        Debug.Log(Boat.GetComponent<Shake>().getCase3Count());
+                    }
+                    if(Boat.GetComponent<Shake>().getCase3Count() > 4 && FindObjectOfType<DialogueTrigger>() == null)
+                    {
+                        GenerateDialogue();
                     }
                     time_PHASE += Time.deltaTime;
                 }
@@ -215,45 +203,68 @@ public class GameManager : MonoBehaviour
                     time_RESPAWN = 0.0f;
                     Timer_PHASE = 0.0f;
                     Timer_RESPAWN = 0.0f;
+                    dialogIndex = 0;
                 }
                 break;
 
             case 4:     //편지 든 병 띄우기 이벤트
-                Timer_PHASE = 60.0f;
-                Timer_RESPAWN = 10.0f;
-                //편지 띄우기 전 대화
-                if (FindObjectOfType<DialogueTrigger>() == null)
+                Timer_PHASE = 10.0f;
+                Debug.Log(Timer_PHASE);
+                if (time_PHASE <= Timer_PHASE)
                 {
-                    DlTriggerObjTransform.position = new Vector3(0f, 0.0f, -10f);
-                    DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-                    StartCoroutine("DlTriggerObj_Gen");
-                }
-
-
-                //편지 띄운 후 대화
-                if (FindObjectOfType<DialogueTrigger>() == null)
-                {
-                    DlTriggerObjTransform.position = new Vector3(0f, 0.0f, -10f);
-                    DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-                    StartCoroutine("DlTriggerObj_Gen");
-                }
-                //하트 파밍 이벤트로의 전환 준비
-                if (FindObjectOfType<TriggerEvent>() == null)
-                {
-                    EvTriggerObjTransform.position = new Vector3(0f, 0f, 10.0f);
-                    EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-                    StartCoroutine("EvTriggerObj_Gen");
+                    if (FindObjectOfType<DialogueTrigger>() == null)
+                    {
+                        GenerateDialogue();
+                    }
+                    //흔들기 튜토리얼 실행
+                    if (time_PHASE >= 1.0f && FindObjectOfType<DialogueTrigger>() == null)
+                    {
+                        BottleWD_Gen();
+                        GenerateDialogue();
+                    }
+                    if (dialogIndex >= 2)
+                    {
+                        EvTriggerObjTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 10.0f);
+                        EvTriggerObjTransform.rotation = Quaternion.Euler(Vector3.zero);
+                        StartCoroutine("EvTriggerObj_Gen");
+                    }
+                    time_PHASE += Time.deltaTime;
                 }
                 break;
 
             //********************************************** 청소년기 **********************************************//
             //******************************************************************************************************//
             //노 젓기 튜토리얼 -> 별 파밍 이벤트 -> 큰 별 파밍 이벤트 -> 독립 이벤트
-            
+
             case 5:     //노 젓기 (클릭-드래그 이동) 튜토리얼
+                if (FindObjectOfType<DialogueTrigger>() == null)
+                {
+                    GenerateDialogue();
+                }
+                if (FindObjectOfType<DialogueTrigger>() == null)
+                {
+                    GenerateDialogue();
+                }
+                if (FindObjectOfType<DialogueTrigger>() == null)
+                {
+                    GenerateDialogue();
+                }
+                if (FindObjectOfType<TriggerEvent>() == null)
+                {
+                    EvTriggerObjTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 10.0f);
+                    EvTriggerObjTransform.rotation = Quaternion.Euler(Vector3.zero);
+                    StartCoroutine("EvTriggerObj_Gen");
+                }
                 break;
 
             case 6:     //별 파밍 이벤트
+                Timer_PHASE = 10.0f;
+                Timer_RESPAWN = 5.0f;
+
+                if (FindObjectOfType<DialogueTrigger>() == null)
+                {
+                    GenerateDialogue();
+                }
                 if (time_PHASE <= Timer_PHASE)
                 {
                     if (time_RESPAWN < Timer_RESPAWN)
@@ -269,11 +280,18 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    PHASE = 6;
+                    time_PHASE = 0.0f;
+                    time_RESPAWN = 0.0f;
+                    Timer_PHASE = 0.0f;
+                    Timer_RESPAWN = 0.0f;
+                    dialogIndex = 0;
+                    PHASE = 7;
                 }
                 break;
 
             case 7:     //큰 별 파밍 이벤트
+                Timer_PHASE = 30.0f;
+                Timer_RESPAWN = 5.0f;
 
                 if (time_PHASE <= Timer_PHASE && time_PHASE < 11.0f)
                 {
@@ -288,9 +306,9 @@ public class GameManager : MonoBehaviour
                     }
                     time_PHASE += Time.deltaTime;
                 }
-                if(time_PHASE < 20.0f && time_PHASE > 11.0f)
+                else if (time_PHASE <= Timer_PHASE && time_PHASE < 20.0f && time_PHASE > 11.0f)
                 {
-                    if(LStar_Count == 0)
+                    if (LStar_Count == 0)
                     {
                         StartCoroutine("LStar_Gen");
                         LStar_Count++;
@@ -299,7 +317,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    PHASE = 7;
+                    PHASE = 8;
                 }
                 break;
 
@@ -307,29 +325,81 @@ public class GameManager : MonoBehaviour
                 //아들과 부모와의 대화
                 if (FindObjectOfType<DialogueTrigger>() == null)
                 {
-                    DlTriggerObjTransform.position = new Vector3(0f, 0.0f, -10f);
-                    DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-                    StartCoroutine("DlTriggerObj_Gen");
+                    GenerateDialogue();
                 }
 
                 //하트 파밍 이벤트로의 전환 준비
                 if (FindObjectOfType<TriggerEvent>() == null)
                 {
-                    EvTriggerObjTransform.position = new Vector3(0f, 0f, 10.0f);
-                    EvTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+                    EvTriggerObjTransform.position = new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z + 10.0f);
+                    EvTriggerObjTransform.rotation = Quaternion.Euler(Vector3.zero);
                     StartCoroutine("EvTriggerObj_Gen");
                 }
                 break;
 
-            //******************************************** 성년기 **************************************************//
-            //******************************************************************************************************//
+            //************************************************** 성년기 **************************************************//
+            //************************************************************************************************************//
             //돈 파밍 이벤트  -> 갈매기 NPC 이벤트  -> 경쟁자 이벤트      -> 소용돌이 이벤트     -> 빙하 이벤트   -> 
             //번개 이벤트     -> 거북이 NPC 이벤트  -> 별의 승천 이벤트   -> 연인 이벤트 1(만남) -> 연인 이벤트 2(프로포즈)
 
             case 9:     //돈 파밍 이벤트
+                Timer_PHASE = 20.0f;
+                Timer_RESPAWN = 5.0f;
+                
+                if (time_PHASE <= Timer_PHASE)
+                {
+                    if (time_RESPAWN < Timer_RESPAWN)
+                    {
+                        time_RESPAWN += Time.deltaTime;
+                    }
+                    else
+                    {
+                        StartCoroutine("Star_Gen");
+                        time_RESPAWN = 0.0f;
+                    }
+                    time_PHASE += Time.deltaTime;
+
+                    if (FindObjectOfType<DialogueTrigger>() == null)
+                    {
+                        GenerateDialogue();
+                    }
+                }
+                else
+                {
+                    PHASE = 10;
+                    time_PHASE = 0.0f;
+                    time_RESPAWN = 0.0f;
+                }
                 break;
 
             case 10:    //갈매기 NPC 이벤트
+                Timer_PHASE = 20.0f;
+                Timer_RESPAWN = 5.0f;
+                
+                if (time_PHASE <= Timer_PHASE)
+                {
+                    if (time_RESPAWN < Timer_RESPAWN)
+                    {
+                        time_RESPAWN += Time.deltaTime;
+                    }
+                    else
+                    {
+                        StartCoroutine("Star_Gen");
+                        time_RESPAWN = 0.0f;
+                    }
+
+                    if (FindObjectOfType<DialogueTrigger>() == null)
+                    {
+                        GenerateDialogue();
+                    }
+                    time_PHASE += Time.deltaTime;
+                }
+                else
+                {
+                    PHASE = 10;
+                    time_PHASE = 0.0f;
+                    time_RESPAWN = 0.0f;
+                }
                 break;
 
             case 11:    //경쟁자 이벤트
@@ -421,7 +491,7 @@ public class GameManager : MonoBehaviour
                 else
                 {*/
                 PHASE = 16;
-                
+
                 break;
 
             case 16:    //별의 승천 이벤트
@@ -434,10 +504,10 @@ public class GameManager : MonoBehaviour
 
             case 18:    //연인 이벤트 2(프로포즈)
                 PHASE = 19;
-                break;  
+                break;
 
-            //******************************************** 노년기 **************************************************//
-            //******************************************************************************************************//
+            //************************************************** 노년기 **************************************************//
+            //************************************************************************************************************//
             case 19:    //아내의 아픔
                 PHASE = 20;
                 break;
@@ -456,7 +526,7 @@ public class GameManager : MonoBehaviour
     }
 
     //************************************************************************************* FUNCTIONS *****************************************************************************************//
-    
+
     //Getter, Setter
     public int GetPhase()
     {
@@ -509,11 +579,25 @@ public class GameManager : MonoBehaviour
             }
         }
         dialogIndex++;
-        if(result == null)
+        if (result == null)
         {
             Debug.LogError("The Dialogue Object has null value");
         }
         return result;
+    }
+
+    public void GenerateDialogue()
+    {
+        Dialogue dialog = new Dialogue();
+
+        DlTriggerObjTransform.position = Player.GetComponent<Transform>().position;
+        DlTriggerObjTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+        dialog = chooseDialog();
+
+        if (dialog.sentences != null)
+        {
+            StartCoroutine("DlTriggerObj_Gen", dialog);
+        }
     }
 
     // ************************************************************************************ COROUTINES *****************************************************************************************//
@@ -689,6 +773,13 @@ public class GameManager : MonoBehaviour
 
     //그 외 이벤트 시 호출하여야 할 Coroutine 목록
     //일기 담긴 병, 큰 배, 섬, 빈 장면 대화 트리거,
+    IEnumerator BottleWD_Gen()
+    {
+        Transform playerTransform = Player.GetComponent<Transform>();
+        BottleWDTransform.position = new Vector3(playerTransform.position.x, BottleWDTransform.position.y, playerTransform.position.z);
+        GameObject instantBottleWD = Instantiate(BottleWithDiary, BottleWDTransform.position, BottleWDTransform.rotation);
+        yield return null;
+    }
     IEnumerator EvTriggerObj_Gen()
     {
 

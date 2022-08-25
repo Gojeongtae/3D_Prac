@@ -24,7 +24,6 @@ public class Control : MonoBehaviour
         //초기화
         heartInt = 5;
         heartMax = 20;
-        isTime = false;
 
         behavior = GetComponent<Behavior>();
         mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -56,21 +55,20 @@ public class Control : MonoBehaviour
         // 마우스 입력을 받았 을 때
         if (Input.GetMouseButtonUp(0))
         {
-            // 마우스로 찍은 위치의 좌표 값을 가져온다
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Water")))
+            if (GameObject.FindGameObjectWithTag("DialogUI") == null)
             {
-                if (hit.transform.tag == "River")
+                // 마우스로 찍은 위치의 좌표 값을 가져온다
+                Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Water")))
                 {
-                    targetPos = new Vector3(hit.point.x, 2, hit.point.z);
-                    anim.SetTrigger("isRow");
+                    if (hit.transform.tag == "River")
+                    {
+                        targetPos = new Vector3(hit.point.x, 2, hit.point.z);
+                        anim.SetTrigger("isRow");
+                    }
                 }
             }
-        }
-        else
-        {
-
         }
     }
 
@@ -114,8 +112,8 @@ public class Control : MonoBehaviour
         }
         if (other.tag == "Heart")
         {
-            heart = other.gameObject;
             isTime = true;
+            heart = other.gameObject;
             if (heartInt > heartMax)
                 heartInt = heartMax;
         }      
@@ -126,6 +124,14 @@ public class Control : MonoBehaviour
             if (heartInt > heartMax)
                 heartInt = heartMax;
         }
+        if (other.tag == "Gacier")
+        {
+            Item item = other.GetComponent<Item>();
+            heartInt += item.value;
+            if (heartInt > heartMax)
+                heartInt = heartMax;
+        }
+
 
 
     }
@@ -133,11 +139,7 @@ public class Control : MonoBehaviour
     {
         if (other.tag == "Heart")
         {
-            heart = other.gameObject;
-            heart.GetComponent<Object>().speed = 5.0f;
-            heart.GetComponent<Object>().rotSpeed = 100.0f;
             isTime = false;
-            
         }
     }
 }

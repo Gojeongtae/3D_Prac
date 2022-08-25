@@ -14,9 +14,15 @@ public class CameraController : MonoBehaviour
     private int result;
 
     public GameObject DelayUI;
+
+    private int count; // 몇번 가능하게 할지
+
+    float All;
+
     // Start is called before the first frame update
     void Start()
     {
+        count = 1;
         Rotspeed = 15.0f;
         Transspeed = 5.0f;
         thisCamera = GetComponent<Camera>();
@@ -26,28 +32,39 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float scroll = Input.GetAxis("Mouse ScrollWheel") * Rotspeed;
+        if(count >= 1 && count <=3)
+        {
 
-        result = (int)Mathf.RoundToInt(follow.rotation.x * 10f);
-
-
-        //if(result >= 3 && result <= 5)
-        
-            if (scroll != 0)
+            float scroll = Input.GetAxis("Mouse ScrollWheel") * Rotspeed;
+            All += scroll;
+            Debug.Log(All);
+            if(All <=0 && All>= -3)
             {
-                Quaternion q = follow.rotation;
-                q.eulerAngles = new Vector3(q.eulerAngles.x + scroll * Rotspeed, q.eulerAngles.y, q.eulerAngles.z);
-            follow.transform.position = new Vector3(follow.transform.position.x, follow.transform.position.y + scroll * Transspeed, follow.transform.position.z);
-                follow.rotation = q;
+                if (scroll != 0)
+                {
+                    Quaternion q = follow.rotation;
+                    q.eulerAngles = new Vector3(q.eulerAngles.x + scroll * Rotspeed, q.eulerAngles.y, q.eulerAngles.z);
+                    follow.transform.position = new Vector3(follow.transform.position.x, follow.transform.position.y + scroll * Transspeed, follow.transform.position.z);
+                    follow.rotation = q;
+                }
+                else if (result != 3)
+                {
+                    DelayUI.SetActive(false);
+                }
+                else if (result == 3)
+                {
+                    DelayUI.SetActive(true);
+                }
+                result = (int)Mathf.RoundToInt(follow.rotation.x * 10f);
             }
-            else if (result != 3)
-            {
-                DelayUI.SetActive(false);
-            }
-            else if (result == 3)
-            {
-                DelayUI.SetActive(true);
-            }
-        
+        }
+        if(All > 0)
+        {
+            All = 0;
+        }
+        if(All < -3)
+        {
+            All = -3;
+        }
     }
 }

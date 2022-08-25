@@ -9,7 +9,7 @@ public class Shake : MonoBehaviour
     private int randDirection;              //배 기울기 방향 정하기(좌우)
 
     private int Case3Count = 0;             //Case 3(흔들기 튜토리얼)에서 배를 흔든 횟수
-    
+
     private GameObject Boat;                //기울일 배 오브젝트
     private GameManager gameManager;        //phase값을 불러올 GameManager 오브젝트
     private Transform boatTransform;
@@ -47,13 +47,14 @@ public class Shake : MonoBehaviour
                 if (Case3Count == 0 || Case3Count == 2)
                 {
                     maxSubRotNum = rightAngle - x;
-                    if(x >= 240.0f)
+                    if (x >= 240.0f)
                     {
                         x += maxSubRotNum * Time.deltaTime / maxTime;
                         transform.localRotation = Quaternion.Euler(new Vector3(x, 270.0f, 0.0f));
                     }
                     if (Input.GetKeyDown(KeyCode.Q))
                     {
+                        gameManager.GenerateDialogue();
                         Case3Count++;
                     }
                 }
@@ -69,6 +70,7 @@ public class Shake : MonoBehaviour
                     }
                     if (Input.GetKeyDown(KeyCode.E))
                     {
+                        gameManager.GenerateDialogue();
                         Case3Count++;
                     }
                 }
@@ -76,30 +78,26 @@ public class Shake : MonoBehaviour
                 //네 번째 키보드 입력 이후
                 if (Case3Count == 4)
                 {
-                    if (boatTransform.localRotation.eulerAngles.x != 270.0f)
+                    if (x != 270.0f)
                     {
-                        float subRot = -90.0f - transform.localRotation.eulerAngles.x;
-                        transform.localRotation = Quaternion.Euler(new Vector3(transform.localRotation.eulerAngles.x + subRot * Time.deltaTime, 270.0f, 0.0f));
-                        Debug.Log("3");
+                        transform.localRotation = Quaternion.Euler(new Vector3(270.0f, 270.0f, 0.0f));
+                        Case3Count++;
                     }
                 }
                 break;
-            
+
             case 13:
 
-                Debug.Log("4");
                 break;
 
             default:
 
-                Debug.Log("5");
                 break;
         }
     }
 
     public int getCase3Count()
     {
-        Debug.Log("6");
         return Case3Count;
     }
 
